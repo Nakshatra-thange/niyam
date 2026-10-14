@@ -8,7 +8,8 @@ const hasDb = !!process.env.DATABASE_URL;
 describe.skipIf(!hasDb)("API", async () => {
   const { buildServer } = await import("../src/api/server.js");
   const { pool } = await import("../src/db/client.js");
-  const app = buildServer();
+  const enqueued: string[] = [];
+  const app = buildServer({ enqueue: async (ids) => void enqueued.push(...ids) });
 
   const body = {
     name: "Ravi Kumar",
@@ -79,6 +80,15 @@ describe.skipIf(!hasDb)("API", async () => {
     expect(res.statusCode).toBe(200);
     expect(res.json().profile.pan).toBe("******789K");
     expect(res.json().audit[0].event).toBe("application.created");
+  });
+  it("creates ranked submissions for the top lenders and enqueues them", async () => {
+    const created = await app.inject({ method: "POST", url: "/applications", headers: { "idempotency-key": randomUUID() }, payload: body });
+    expect(created.json().status).toBe("submitting");
+    const res = await app.inject({ method: "GET", url: `/applications/${created.json().id}` });
+    const subs = res.json().submissions;
+    expect(subs.length).toBeGreaterThan(0);
+    expect(subs.map((s: any) => s.rank)).toEqual(subs.map((_: any, i: number) => i + 1));
+    expect(subs.every((s: any) => s.status === "queued")).toBe(true);
   });
 
   it("eligibility is a dry run", async () => {
