@@ -1,0 +1,35 @@
+SUVIDHA FINANCE LIMITED
+Retail Credit Policy - Personal Loans (Salaried)
+Policy Ref: SFL/RCP/PL/2026/03    Version 3.2    Effective: 01 April 2026
+
+1. PURPOSE
+This document lays down the credit norms for unsecured personal loans extended to salaried individuals. Sourcing teams and DSA partners must ensure every application is screened against these norms before login.
+
+2. ELIGIBLE CUSTOMER SEGMENT
+2.1 The facility is available only to salaried employees of private limited companies, public limited companies, MNCs and government / PSU organisations. Self-employed individuals and business owners are not covered under this policy.
+2.2 Minimum continuous employment of 1 year with the current employer is required.
+
+3. AGE
+Minimum age of the applicant shall be 21 years. Maximum age shall be 58 years at the time of application.
+
+4. CREDIT BUREAU
+4.1 Applicants must have a CIBIL score of 720 or above.
+4.2 Applicants with no credit history (NTC) shall not be considered.
+
+5. INCOME
+Minimum net annual income of Rs. 3,60,000 (Rupees Three Lakh Sixty Thousand only), as evidenced by salary slips and Form 16.
+
+=== PAGE BREAK ===
+
+6. OBLIGATIONS
+The applicant's existing EMI obligations shall not exceed 50% of net monthly income (FOIR cap of 50%).
+
+7. LOAN AMOUNT AND PRICING
+7.1 Loan amount: minimum Rs. 50,000 and maximum Rs. 15 lakh.
+7.2 Rate of interest: 11.50% to 18.00% per annum, based on risk grade.
+
+8. NEGATIVE PROFILES
+Applications shall not be sourced from employees of collection agencies, DSAs, or from police and armed forces personnel without prior approval of the Zonal Credit Head.
+
+ANNEXURE A - AMENDMENTS
+A.1 With effect from 01 August 2026, clause 4.1 stands amended: the minimum CIBIL score is revised to 750.

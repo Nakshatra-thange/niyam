@@ -11,12 +11,11 @@
         "test": "vitest run",
         "typecheck": "tsc --noEmit",
         "dev:worker": "tsx watch src/queue/worker.ts",
-"agent:extract": "tsx src/agent/cli.ts",
-"policies:pdf": "tsx scripts/make-policy-pdfs.ts",
-"load-test": "tsx scripts/load-test.ts"
+        "agent:extract": "tsx src/agent/cli.ts",
+        "policies:pdf": "tsx scripts/make-policy-pdfs.ts",
+        "load-test": "tsx scripts/load-test.ts"
     },
     "dependencies": {
-        "@anthropic-ai/sdk": "^0.133.0",
         "bullmq": "^6.3.15",
         "dotenv": "^16.4.5",
         "fastify": "^5.2.0",
