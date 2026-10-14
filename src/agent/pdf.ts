@@ -6,16 +6,22 @@ import { extractText, getDocumentProxy } from "unpdf";
  * Per-page text matters: every rule the agent extracts must cite a page,
  * and the validator checks the quote really is on that page.
  */
-export async function extractPages(path: string): Promise<string[]> {
-  if (path.endsWith(".txt")) {
-    const raw = await readFile(path, "utf8");
+export async function extractPagesFromBytes(bytes: Uint8Array, kind: "pdf" | "txt"): Promise<string[]> {
+  if (kind === "txt") {
+    const raw = new TextDecoder().decode(bytes);
     return raw.split("=== PAGE BREAK ===").map((p) => p.trim());
   }
-  const pdf = await getDocumentProxy(new Uint8Array(await readFile(path)));
+  const pdf = await getDocumentProxy(bytes);
   const { text } = await extractText(pdf, { mergePages: false });
   const pages = (text as string[]).map((p) => p.trim());
   if (pages.every((p) => p.length < 20)) {
-    throw new Error(`${path}: no extractable text. Scanned PDF? It would need OCR first.`);
+    throw new Error("no extractable text. Scanned PDF? It would need OCR first.");
   }
   return pages;
+}
+
+export async function extractPages(path: string): Promise<string[]> {
+  const bytes = new Uint8Array(await readFile(path));
+  const kind = path.endsWith(".txt") ? "txt" : "pdf";
+  return extractPagesFromBytes(bytes, kind);
 }

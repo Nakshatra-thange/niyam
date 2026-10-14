@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Niyam · Rule review</title>
+<style>
+  :root {
+    --bg: #f5f4ef; --panel: #ffffff; --ink: #1b1a17; --muted: #6a675f; --line: #e2dfd6;
+    --accent: #1d5c47; --accent-soft: #e4efe9;
+    --warn: #7a4f00; --warn-bg: #fcf1d8; --bad: #962b2b; --bad-bg: #f9e7e7; --good: #1f6638; --good-bg: #e5f3e8;
+    --mark: #fde68a; --mark-active: #f59e0b;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  header { display: flex; align-items: center; gap: 14px; padding: 10px 18px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  header h1 { margin: 0; font-size: 16px; letter-spacing: .01em; }
+  header h1 b { color: var(--accent); }
+  header .who { margin-left: auto; display: flex; gap: 8px; align-items: center; color: var(--muted); }
+  input, select, textarea, button { font: inherit; }
+  input[type=text], textarea { border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; background: #fff; }
+  button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.danger { color: var(--bad); }
+  button:disabled { opacity: .5; cursor: wait; }
+  main { display: grid; grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr); height: calc(100vh - 51px); }
+  aside, #detail, #source { overflow: auto; padding: 16px; }
+  aside { background: var(--panel); border-right: 1px solid var(--line); }
+  #source { border-left: 1px solid var(--line); background: #fbfaf6; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 8px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .lender { margin-bottom: 14px; }
+  .lender > div:first-child { font-weight: 600; margin-bottom: 4px; }
+  .ver { display: flex; justify-content: space-between; gap: 6px; padding: 5px 8px; border-radius: 6px; cursor: pointer; }
+  .ver:hover { background: var(--bg); }
+  .ver.sel { background: var(--accent-soft); }
+  .badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
+  .b-draft { background: var(--warn-bg); color: var(--warn); }
+  .b-active { background: var(--good-bg); color: var(--good); }
+  .b-retired { background: #eeece6; color: var(--muted); }
+  .b-rejected { background: var(--bad-bg); color: var(--bad); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th:first-child { width: 120px; } th:nth-child(3) { width: 44px; }
+  td, th { text-align: left; padding: 6px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); font-weight: 500; }
+  td.f { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+  td input { width: 100%; font-family: var(--mono); font-size: 12px; }
+  .ro { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+  .cite { overflow-wrap: anywhere; font-size: 12px; color: var(--muted); cursor: pointer; border-left: 2px solid var(--mark-active); padding-left: 6px; margin-top: 4px; }
+  .cite:hover { color: var(--ink); }
+  .warn { background: var(--warn-bg); color: var(--warn); border-radius: 6px; padding: 6px 9px; margin-bottom: 6px; font-size: 13px; }
+  .err { background: var(--bad-bg); color: var(--bad); border-radius: 6px; padding: 8px 10px; margin: 8px 0; white-space: pre-wrap; font-size: 13px; }
+  .ok { background: var(--good-bg); color: var(--good); border-radius: 6px; padding: 8px 10px; margin: 8px 0; font-size: 13px; }
+  .diff div { font-family: var(--mono); font-size: 12px; padding: 2px 0; overflow-wrap: anywhere; }
+  .plus { color: var(--good); } .minus { color: var(--bad); } .chg { color: var(--warn); }
+  .stat { display: flex; gap: 18px; flex-wrap: wrap; }
+  .stat div b { display: block; font-size: 20px; }
+  .page { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; white-space: pre-wrap; font-family: var(--mono); font-size: 12px; line-height: 1.6; }
+  .page .pn { font-family: inherit; color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+  mark { background: var(--mark); border-radius: 2px; padding: 0 1px; }
+  mark.active { background: var(--mark-active); color: #fff; }
+  .upload input[type=file] { width: 100%; font-size: 12px; margin: 6px 0; }
+  .upload input[type=text] { width: 100%; }
+  .empty { color: var(--muted); padding: 40px 10px; text-align: center; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; height: auto; } aside, #source { border: 0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1><b>Niyam</b> · rule review</h1>
+  <span class="muted small">Agent proposes. A human approves. Only approved rules route loans.</span>
+  <div class="who"><label for="reviewer">Reviewer</label><input type="text" id="reviewer" placeholder="your name" size="14"></div>
+</header>
+<main>
+  <aside>
+    <div class="card upload">
+      <h2>Upload a lender policy</h2>
+      <input type="text" id="up-lender" placeholder="lender id, e.g. metro-bank">
+      <input type="file" id="up-file" accept=".pdf,.txt">
+      <button class="primary" id="up-btn">Extract rules</button>
+      <div id="up-status" class="small"></div>
+    </div>
+    <div id="list"><div class="muted">Loading…</div></div>
+  </aside>
+  <section id="detail"><div class="empty">Select a ruleset version on the left.</div></section>
+  <section id="source"><div class="empty">The source policy appears here, with every cited quote highlighted.</div></section>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = { get(k) { try { return localStorage.getItem(k) || ""; } catch { return ""; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+
+let token = store.get("niyam_admin_token");
+let current = null; // { row, impact }
+$("#reviewer").value = store.get("niyam_reviewer");
+$("#reviewer").addEventListener("input", (e) => store.set("niyam_reviewer", e.target.value.trim()));
+
+async function api(path, opts = {}, retried = false) {
+  const res = await fetch(path, { ...opts, headers: { "x-admin-token": token, "x-reviewer": $("#reviewer").value.trim(), ...(opts.headers || {}) } });
+  if (res.status === 401 && !retried) {
+    const t = prompt("Admin token (ADMIN_TOKEN in your .env):");
+    if (t === null) throw new Error("unauthorized");
+    token = t; store.set("niyam_admin_token", t);
+    return api(path, opts, true);
+  }
+  const isJson = (res.headers.get("content-type") || "").includes("json");
+  const body = isJson ? await res.json() : await res.text();
+  if (!res.ok) { const e = new Error(body.error || res.statusText); e.body = body; throw e; }
+  return body;
+}
+const errText = (e) => [e.message, ...[].concat(e.body?.details || e.body?.errors || [])].join("\n  • ");
+const fmtVal = (v) => JSON.stringify(v);
+const fmtRule = (r) => `${r.field} ${r.op} ${fmtVal(r.value)}`;
+
+// ------------------------------------------------------------- list
+async function loadList(selectId) {
+  const rows = await api("/admin/rulesets");
+  const byLender = {};
+  rows.forEach((r) => (byLender[r.lender_id] ||= { name: r.lender_name, versions: [] }).versions.push(r));
+  $("#list").innerHTML = Object.entries(byLender).map(([id, l]) => `
+    <div class="lender"><div>${esc(l.name)} <span class="muted small">${esc(id)}</span></div>
+      ${l.versions.map((v) => `
+        <div class="ver ${current?.row.id === v.id ? "sel" : ""}" data-id="${v.id}">
+          <span>v${v.version} <span class="muted small">${v.source}${v.warning_count ? ` · ${v.warning_count}⚠` : ""}</span></span>
+          <span class="badge b-${v.status}">${v.status}</span>
+        </div>`).join("")}
+    </div>`).join("") || `<div class="muted">No rulesets yet. Run npm run db:seed.</div>`;
+  document.querySelectorAll(".ver").forEach((el) => el.addEventListener("click", () => open(Number(el.dataset.id))));
+  if (selectId) await open(selectId);
+}
+
+// ------------------------------------------------------------- detail
+async function open(id) {
+  $("#detail").innerHTML = `<div class="empty">Loading…</div>`;
+  const [row, impact] = await Promise.all([api(`/admin/rulesets/${id}`), api(`/admin/rulesets/${id}/impact`)]);
+  current = { row, impact };
+  document.querySelectorAll(".ver").forEach((el) => el.classList.toggle("sel", Number(el.dataset.id) === id));
+  renderDetail();
+  renderSource();
+}
+
+function renderDetail() {
+  const { row, impact } = current;
+  const rs = row.ruleset, rep = row.report || {};
+  const editable = row.status === "draft";
+  const d = row.diffVsActive;
+
+  const diffHtml = !d ? `<div class="muted small">${row.status === "active" ? "This is the live version." : "No live version to compare with (new lender)."}</div>`
+    : !d.hasChanges ? `<div class="muted small">Identical to live v${row.active.version}.</div>`
+    : `<div class="diff">
+        ${d.added.map((r) => `<div class="plus">+ ${esc(fmtRule(r))}</div>`).join("")}
+        ${d.removed.map((r) => `<div class="minus">− ${esc(fmtRule(r))}</div>`).join("")}
+        ${d.changed.map((c) => `<div class="chg">~ ${esc(c.after.field)} ${esc(c.after.op)}: ${esc(fmtVal(c.before.value))} → ${esc(fmtVal(c.after.value))}</div>`).join("")}
+        ${d.reworded.map((c) => `<div class="muted">· ${esc(c.after.field)}: message reworded</div>`).join("")}
+        ${d.rate ? `<div class="chg">~ rate: ${d.rate.before.join("–")}% → ${d.rate.after.join("–")}%</div>` : ""}
+       </div>`;
+
+  const impactHtml = `
+    <div class="stat">
+      <div><b>${impact.eligibleBefore}</b><span class="muted small">eligible now</span></div>
+      <div><b>${impact.eligibleAfter}</b><span class="muted small">eligible with v${row.version}</span></div>
+      <div><b class="plus">+${impact.gained}</b><span class="muted small">gain access</span></div>
+      <div><b class="minus">−${impact.lost}</b><span class="muted small">lose access</span></div>
+    </div>
+    <div class="muted small">Replayed against the last ${impact.sampled} applicants${impact.comparedTo ? `, compared with live v${impact.comparedTo.version}` : ""}.</div>
+    ${impact.examples.lost.length ? `<div class="small" style="margin-top:6px"><b>Would lose access:</b> ${impact.examples.lost.map((x) => `${esc(x.city)} / CIBIL ${esc(x.cibil ?? "none")} / ₹${esc(x.income)}`).join(" · ")}</div>` : ""}`;
+
+  const warnings = (rep.warnings || []).map((w) => `<div class="warn">${esc(w)}</div>`).join("") || `<div class="muted small">None.</div>`;
+
+  const rulesHtml = rs.rules.map((r, i) => `
+    <tr data-i="${i}">
+      <td class="f">${esc(r.field)}<br><span class="muted">${esc(r.op)}</span></td>
+      <td>
+        ${editable ? `<input type="text" class="val" value="${esc(fmtVal(r.value))}">` : `<div class="ro">${esc(fmtVal(r.value))}</div>`}
+        <div class="small">${editable ? `<input type="text" class="msg" value="${esc(r.message)}" style="font-family:inherit;margin-top:4px">` : esc(r.message)}</div>
+        ${r.citation ? `<div class="cite" data-i="${i}">p${r.citation.page} · “${esc(r.citation.quote)}”</div>` : `<div class="small muted">no citation</div>`}
+      </td>
+      ${editable ? `<td><button class="danger rm" title="Remove rule">✕</button></td>` : ""}
+    </tr>`).join("");
+
+  const meta = [row.source === "agent" ? `extracted by ${esc(rep.model)} in ${rep.attempts} attempt(s)` : "hand-written",
+    row.source_document && `from ${esc(row.source_document)}`, rep.usage?.cost ? `$${Number(rep.usage.cost).toFixed(4)}` : null,
+    row.created_by && `uploaded by ${esc(row.created_by)}`, row.approved_by && `approved by ${esc(row.approved_by)}`].filter(Boolean).join(" · ");
+
+  $("#detail").innerHTML = `
+    <h2>${esc(rs.lenderName)} · v${row.version} <span class="badge b-${row.status}">${row.status}</span></h2>
+    <div class="muted small">${meta}</div>
+    ${!row.hasAdapter ? `<div class="warn" style="margin-top:8px">No API integration for this lender yet. Approved rules will show it as eligible, but applications won't be submitted to it.</div>` : ""}
+    ${row.review_note ? `<div class="small" style="margin-top:6px">Note: ${esc(row.review_note)}</div>` : ""}
+    <div class="actions">
+      ${editable ? `<button class="primary" id="approve">Approve & make live</button><button class="danger" id="reject">Reject</button>` : ""}
+      ${row.status === "retired" ? `<button id="rollback">Roll back to this version</button>` : ""}
+    </div>
+    <div id="msg"></div>
+
+    <h3>If approved</h3><div class="card">${impactHtml}</div>
+    <h3>Changes vs live</h3><div class="card">${diffHtml}</div>
+    <h3>Needs a human (${(rep.warnings || []).length})</h3>${warnings}
+    <h3>Rules</h3>
+    <div class="card">
+      <div class="small" style="margin-bottom:6px">Interest rate:
+        ${editable ? `<input type="text" id="rmin" value="${rs.interestRateMin}" size="5"> – <input type="text" id="rmax" value="${rs.interestRateMax}" size="5"> % p.a.`
+                   : `${rs.interestRateMin}–${rs.interestRateMax}% p.a.`}
+        ${rep.rateNote ? `<span class="muted"> (${esc(rep.rateNote)})</span>` : ""}
+        ${rep.rateCitation ? `<div class="cite" data-i="rate">p${rep.rateCitation.page} · “${esc(rep.rateCitation.quote)}”</div>` : ""}
+      </div>
+      <table><thead><tr><th>Field</th><th>Value · message · source</th>${editable ? "<th></th>" : ""}</tr></thead><tbody>${rulesHtml}</tbody></table>
+    </div>
+    <h3>History</h3>
+    <div class="card small">${(row.events || []).slice(0, 12).map((e) => `<div>${new Date(e.created_at).toLocaleString()} · <b>${esc(e.event)}</b> #${e.ruleset_id} by ${esc(e.actor)}${e.data?.humanEdited ? " (with human edits)" : ""}</div>`).join("") || "—"}</div>`;
+
+  document.querySelectorAll(".cite").forEach((el) => el.addEventListener("click", () => focusCite(el.dataset.i)));
+  document.querySelectorAll(".rm").forEach((b) => b.addEventListener("click", (e) => { const tr = e.target.closest("tr"); tr.dataset.removed = tr.dataset.removed ? "" : "1"; tr.style.opacity = tr.dataset.removed ? .35 : 1; }));
+  $("#approve")?.addEventListener("click", doApprove);
+  $("#reject")?.addEventListener("click", doReject);
+  $("#rollback")?.addEventListener("click", doRollback);
+}
+
+function collectEdits() {
+  const rs = current.row.ruleset;
+  const rules = [];
+  for (const tr of document.querySelectorAll("tbody tr")) {
+    if (tr.dataset.removed) continue;
+    const base = rs.rules[Number(tr.dataset.i)];
+    let value;
+    try { value = JSON.parse(tr.querySelector(".val").value); }
+    catch { throw new Error(`${base.field}: value is not valid JSON (numbers like 750, strings like "salaried", lists like ["pune","delhi"])`); }
+    rules.push({ ...base, value, message: tr.querySelector(".msg").value.trim() });
+  }
+  return { ...rs, interestRateMin: Number($("#rmin").value), interestRateMax: Number($("#rmax").value), rules };
+}
+
+function say(kind, text) { $("#msg").innerHTML = `<div class="${kind}">${esc(text)}</div>`; }
+function requireReviewer() { if (!$("#reviewer").value.trim()) { say("err", "Enter your name as reviewer (top right) first. Every approval is recorded against a person."); $("#reviewer").focus(); return false; } return true; }
+
+async function doApprove() {
+  if (!requireReviewer()) return;
+  let edited;
+  try { edited = collectEdits(); } catch (e) { return say("err", e.message); }
+  const { row, impact } = current;
+  // A changed value with an unchanged message would show applicants the wrong reason.
+  const stale = edited.rules.filter((r) => { const o = row.ruleset.rules.find((x) => x.id === r.id); return o && JSON.stringify(o.value) !== JSON.stringify(r.value) && o.message === r.message; });
+  const staleNote = stale.length ? `\n\n⚠ You changed the value of ${stale.map((r) => r.field).join(", ")} but not its message. Applicants will see: "${stale[0].message}".` : "";
+  const ok = confirm(`Make ${row.ruleset.lenderName} v${row.version} live?\n\n${impact.gained} recent applicants gain access, ${impact.lost} lose it.\nRouting changes immediately.${staleNote}`);
+  if (!ok) return;
+  $("#approve").disabled = true;
+  try {
+    const res = await api(`/admin/rulesets/${row.id}/approve`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ruleset: edited }) });
+    await loadList(res.id);
+    say("ok", `v${res.version} is live${res.replaced ? `, replacing v${res.replaced.version}` : ""}.${res.humanEdited ? " Your edits were recorded." : ""}`);
+  } catch (e) { say("err", errText(e)); $("#approve").disabled = false; }
+}
+
+async function doReject() {
+  if (!requireReviewer()) return;
+  const reason = prompt("Why are you rejecting this version?");
+  if (!reason) return;
+  try { const res = await api(`/admin/rulesets/${current.row.id}/reject`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ reason }) }); await loadList(res.id); }
+  catch (e) { say("err", errText(e)); }
+}
+
+async function doRollback() {
+  if (!requireReviewer()) return;
+  const note = prompt("Reason for rolling back:");
+  if (note === null) return;
+  try { const res = await api(`/admin/rulesets/${current.row.id}/rollback`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ note }) }); await loadList(res.id); say("ok", `Rolled back: v${res.version} is live again.`); }
+  catch (e) { say("err", errText(e)); }
+}
+
+// ------------------------------------------------------------- source panel
+const quoteRegex = (q) => new RegExp(q.trim().split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s+"), "i");
+
+function highlight(text, cites) {
+  const ranges = [];
+  for (const c of cites) { const m = quoteRegex(c.quote).exec(text); if (m) ranges.push([m.index, m.index + m[0].length, c.i]); }
+  ranges.sort((a, b) => a[0] - b[0]);
+  let html = "", pos = 0;
+  for (const [s, e, i] of ranges) { if (s < pos) continue; html += esc(text.slice(pos, s)) + `<mark data-i="${i}">${esc(text.slice(s, e))}</mark>`; pos = e; }
+  return html + esc(text.slice(pos));
+}
+
+function renderSource() {
+  const { row } = current;
+  const pages = row.source_pages;
+  if (!pages?.length) { $("#source").innerHTML = `<div class="empty">Hand-written rules: no source document.</div>`; return; }
+  const cites = row.ruleset.rules.map((r, i) => r.citation && { ...r.citation, i: String(i) }).filter(Boolean);
+  if (row.report?.rateCitation) cites.push({ ...row.report.rateCitation, i: "rate" });
+  $("#source").innerHTML = `<h2>${esc(row.source_document || "Source")}</h2>` + pages.map((p, pi) =>
+    `<div class="page" id="page-${pi + 1}"><div class="pn">Page ${pi + 1}</div>${highlight(p, cites.filter((c) => c.page === pi + 1))}</div>`).join("");
+}
+
+function focusCite(i) {
+  document.querySelectorAll("mark.active").forEach((m) => m.classList.remove("active"));
+  const m = document.querySelector(`mark[data-i="${i}"]`);
+  if (m) { m.classList.add("active"); m.scrollIntoView({ behavior: "smooth", block: "center" }); }
+}
+
+// ------------------------------------------------------------- upload
+$("#up-btn").addEventListener("click", async () => {
+  const lender = $("#up-lender").value.trim(), file = $("#up-file").files[0];
+  if (!lender || !file) return ($("#up-status").innerHTML = `<div class="err">Enter a lender id and choose a file.</div>`);
+  $("#up-btn").disabled = true;
+  $("#up-status").innerHTML = `<div class="muted">The agent is reading ${esc(file.name)}… (20–60s)</div>`;
+  try {
+    const res = await api(`/admin/policies?lender=${encodeURIComponent(lender)}&filename=${encodeURIComponent(file.name)}`, {
+      method: "POST", headers: { "content-type": file.name.endsWith(".pdf") ? "application/pdf" : "text/plain" }, body: file,
+    });
+    $("#up-status").innerHTML = `<div class="ok">Draft v${res.version} ready: ${res.attempts} attempt(s), ${res.warnings.length} item(s) for review, $${Number(res.usage.cost).toFixed(4)}.</div>`;
+    await loadList(res.id);
+  } catch (e) {
+    $("#up-status").innerHTML = `<div class="err">${esc(errText(e))}</div>`;
+  } finally { $("#up-btn").disabled = false; }
+});
+
+loadList().catch((e) => ($("#list").innerHTML = `<div class="err">${esc(errText(e))}</div>`));
+</script>
+</body>
+</html>

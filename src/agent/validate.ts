@@ -145,3 +145,25 @@ export function validateExtraction(raw: unknown, pages: string[], lenderId: stri
   if (!ruleset.success) return { ok: false, errors: ruleset.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`), warnings };
   return { ok: true, errors, warnings, ruleset: ruleset.data };
 }
+
+
+/**
+ * Re-checks citations on a ruleset a human has edited. A reviewer may change a
+ * value, but must not leave a rule pointing at text that isn't in the document.
+ * Rules without a citation are allowed (a human added them) but flagged.
+ */
+export function checkRulesetCitations(rules: LenderRuleset["rules"], pages: string[]): { errors: string[]; warnings: string[] } {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    for (const r of rules) {
+      if (!r.citation) {
+        warnings.push(`${r.id}: no citation (added by a human reviewer)`);
+        continue;
+      }
+      if (pages.length === 0) continue; // hand-written ruleset: no source document to check against
+      const where = quoteIsOnPage(r.citation.quote, pages, r.citation.page);
+      if (where === "other_page") errors.push(`${r.id}: quote is not on page ${r.citation.page}`);
+      if (where === "no") errors.push(`${r.id}: quote "${r.citation.quote.slice(0, 60)}" is not in the source document`);
+    }
+    return { errors, warnings };
+  }

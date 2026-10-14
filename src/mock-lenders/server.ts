@@ -24,13 +24,13 @@ function rateLimited(lender: MockLender): boolean {
   hits.set(lender.id, recent);
   return recent.length > lender.chaos.rateLimitPerMinute;
 }
-
+const DECLINE_RATE = Number(process.env.MOCK_DECLINE_RATE ?? 0.15);
 // The lender's own hidden decision. Even if Niyam's rules say "eligible",
 // a real lender sometimes says no — so do we (~15% of the time).
 function decide(input: { cibil: number | null; income: number; amount: number }) {
   if (!input.income || input.income < 10000) return { approved: false, reason: "Income below internal threshold" };
   if (input.cibil !== null && input.cibil < 650) return { approved: false, reason: "Bureau score too low" };
-  if (Math.random() < 0.15) return { approved: false, reason: "Declined as per internal credit policy" };
+  if (Math.random() < DECLINE_RATE) return { approved: false, reason: "Declined as per internal credit policy" };
   return { approved: true, rate: Math.round(rand(11, 28) * 10) / 10 };
 }
 

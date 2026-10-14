@@ -12,8 +12,11 @@
         "typecheck": "tsc --noEmit",
         "dev:worker": "tsx watch src/queue/worker.ts",
         "agent:extract": "tsx src/agent/cli.ts",
-        "policies:pdf": "tsx scripts/make-policy-pdfs.ts",
-        "load-test": "tsx scripts/load-test.ts"
+        "policies:pdf": "tsx src/scripts/make-policy-pdfs.ts",
+        "load-test": "tsx scripts/load-test.ts",
+        "eval": "tsx evals/run.ts",
+"demo": "tsx src/scripts/demo.ts"
+        
     },
     "dependencies": {
         "bullmq": "^6.3.15",

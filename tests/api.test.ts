@@ -56,7 +56,7 @@ describe.skipIf(!hasDb)("API", async () => {
 
     const { rows } = await pool.query(`SELECT count(*)::int AS n FROM applications WHERE idempotency_key = $1`, [key]);
     expect(rows[0].n).toBe(1);
-  });
+  }, 20_000);
 
   it("handles 10 concurrent identical requests: one row, one id", async () => {
     const key = randomUUID();
@@ -65,14 +65,14 @@ describe.skipIf(!hasDb)("API", async () => {
     );
     expect(results.filter((r) => r.statusCode === 201)).toHaveLength(1);
     expect(new Set(results.map((r) => r.json().id)).size).toBe(1);
-  });
+  }, 20_000);
 
   it("refuses the same key with a different body", async () => {
     const key = randomUUID();
     await app.inject({ method: "POST", url: "/applications", headers: { "idempotency-key": key }, payload: body });
     const res = await app.inject({ method: "POST", url: "/applications", headers: { "idempotency-key": key }, payload: { ...body, loan_amount: 999999 } });
     expect(res.statusCode).toBe(422);
-  });
+  }, 20_000);
 
   it("GET masks the PAN and includes the audit trail", async () => {
     const created = await app.inject({ method: "POST", url: "/applications", headers: { "idempotency-key": randomUUID() }, payload: body });

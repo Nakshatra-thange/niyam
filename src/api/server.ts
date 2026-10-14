@@ -9,6 +9,8 @@ import { ADAPTERS } from "../lenders/adapters.js";
 import { ApplicantProfileSchema, LenderRulesetSchema, type ApplicantProfile, type LenderRuleset } from "../rules/schema.js";
 import { route, type RoutingResult } from "../rules/engine.js";
 import { canonicalJson, maskPan, sha256 } from "../lib/hash.js";
+import { adminRoutes } from "./admin.js";
+import type { Model } from "../agent/model.js";
 
 const SUBMIT_TOP_N = Number(process.env.SUBMIT_TOP_N ?? 3);
 const WEBHOOK_SECRET = process.env.LENDER_WEBHOOK_SECRET ?? "dev-webhook-secret";
@@ -16,15 +18,19 @@ const WEBHOOK_SECRET = process.env.LENDER_WEBHOOK_SECRET ?? "dev-webhook-secret"
 export type ServerDeps = {
   enqueue: (submissionIds: string[]) => Promise<void>;
   circuitStates?: () => Promise<Record<string, string>>;
+  model?: () => Model; // for policy uploads in the review UI
+  adminToken?: string; // empty string disables auth (tests); omit to use ADMIN_TOKEN
 };
 
 async function defaultDeps(): Promise<ServerDeps> {
   const { enqueueSubmissions } = await import("../queue/queue.js");
   const { CircuitBreaker } = await import("../lib/circuit-breaker.js");
   const { createRedis } = await import("../lib/redis.js");
+  const { openRouterModel } = await import("../agent/model.js");
   const breaker = new CircuitBreaker(createRedis());
   return {
     enqueue: enqueueSubmissions,
+    model: () => openRouterModel(),
     circuitStates: async () => Object.fromEntries(await Promise.all(Object.keys(ADAPTERS).map(async (id) => [id, await breaker.state(id)]))),
   };
 }
@@ -37,7 +43,7 @@ export function buildServer(deps: ServerDeps) {
       return reply.code(400).send({ error: "validation_failed", issues: err.issues.map((i) => ({ path: i.path.join("."), message: i.message })) });
     }
     app.log.error(err);
-    return reply.code(500).send({ error: "internal_error" });
+    return reply.code(500).send({ error: "internal_error", message: (err as any)?.message ?? "Internal error" });
   });
 
   async function loadActiveRulesets(): Promise<{ id: number; ruleset: LenderRuleset }[]> {
@@ -81,7 +87,9 @@ export function buildServer(deps: ServerDeps) {
 
     const rulesets = await loadActiveRulesets();
     const routing = route(rulesets.map((r) => r.ruleset), profile);
-    const targets = routing.eligible.slice(0, SUBMIT_TOP_N);
+    // Only lenders we actually have an integration for. A lender onboarded from a
+    // policy PDF is eligible for display before its API adapter exists.
+    const targets = routing.eligible.filter((d) => ADAPTERS[d.lenderId]).slice(0, SUBMIT_TOP_N);
     const status = targets.length > 0 ? "submitting" : "no_match";
 
     const result = await withTx(async (c) => {
@@ -191,6 +199,8 @@ export function buildServer(deps: ServerDeps) {
       });
     });
   });
+
+  app.register(adminRoutes, { model: deps.model, adminToken: deps.adminToken !== undefined ? deps.adminToken : process.env.ADMIN_TOKEN });
 
   return app;
 }
