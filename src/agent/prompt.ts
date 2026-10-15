@@ -28,6 +28,7 @@ Report the annual rate range as interestRateMin / interestRateMax (percent per a
 4. If a policy says a parameter is NOT required (e.g. "credit score not mandatory"), do not create a rule for it.
 5. If wording is genuinely ambiguous, make your best reading AND record it in ambiguities so a human checks it.
 6. Rule ids: short lowercase slugs like "cibil-min" or "age-range". The message is a short sentence an applicant would understand.
+7. Who can borrow. If the policy limits eligibility by occupation or borrower type, you MUST add an employment_type rule. Map: salaried employees / job holders -> "salaried"; self-employed individuals or professionals -> "self_employed"; proprietors, business owners, shop owners, traders -> "business_owner". "Self-employed and business owners" means BOTH values: in ["self_employed", "business_owner"]. "Salaried only" or "self-employed not covered" means eq "salaried". If the policy accepts every type, add no rule.
 
 Call the submit_ruleset tool exactly once with your result.`;
 

@@ -1,0 +1,1345 @@
+{
+  "models": [
+    "openai/gpt-4o-mini",
+    "anthropic/claude-sonnet-4.5"
+  ],
+  "runs": 3,
+  "summaries": [
+    {
+      "model": "openai/gpt-4o-mini",
+      "cases": 18,
+      "passedValidation": 18,
+      "firstTryRate": 0.83,
+      "recall": 0.94,
+      "precision": 0.97,
+      "exactRulesets": 12,
+      "trapsPassed": 51,
+      "trapsTotal": 51,
+      "avgSeconds": 5.39,
+      "totalCost": 0.0083
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "cases": 18,
+      "passedValidation": 0,
+      "firstTryRate": 0,
+      "recall": 0,
+      "precision": 0,
+      "exactRulesets": 0,
+      "trapsPassed": 0,
+      "trapsTotal": 51,
+      "avgSeconds": 0,
+      "totalCost": 0
+    }
+  ],
+  "scores": [
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 6543,
+      "cost": 0.000524,
+      "tokens": 1882,
+      "expected": 6,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 0.83,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": true
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": true
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": true
+        }
+      ],
+      "missing": [
+        "employment_type|in|[\"salaried\"]"
+      ],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4232,
+      "cost": 0.000429,
+      "tokens": 1577,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": true
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": true
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5026,
+      "cost": 0.000504,
+      "tokens": 1718,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 0.8,
+      "recall": 0.8,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": true
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": true
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [
+        "employment_type|in|[\"business_owner\",\"self_employed\"]  ≠  employment_type|in|[\"self_employed\"]"
+      ],
+      "extra": [
+        "employment_type|in|[\"self_employed\"]"
+      ]
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 2,
+      "durationMs": 8147,
+      "cost": 0.000794,
+      "tokens": 3598,
+      "expected": 5,
+      "ok": true,
+      "firstTry": false,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": true
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 3175,
+      "cost": 0.00035,
+      "tokens": 1443,
+      "expected": 4,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": true
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": true
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4168,
+      "cost": 0.000438,
+      "tokens": 1647,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": true
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": true
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 8006,
+      "cost": 0.000437,
+      "tokens": 1898,
+      "expected": 6,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 0.83,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": true
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": true
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": true
+        }
+      ],
+      "missing": [
+        "employment_type|in|[\"salaried\"]"
+      ],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4363,
+      "cost": 0.000352,
+      "tokens": 1577,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": true
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": true
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 7341,
+      "cost": 0.000419,
+      "tokens": 1720,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 0.8,
+      "recall": 0.8,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": true
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": true
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [
+        "employment_type|in|[\"business_owner\",\"self_employed\"]  ≠  employment_type|in|[\"self_employed\"]"
+      ],
+      "extra": [
+        "employment_type|in|[\"self_employed\"]"
+      ]
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 2,
+      "durationMs": 8677,
+      "cost": 0.000793,
+      "tokens": 3595,
+      "expected": 5,
+      "ok": true,
+      "firstTry": false,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": true
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 3216,
+      "cost": 0.000277,
+      "tokens": 1449,
+      "expected": 4,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": true
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": true
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4465,
+      "cost": 0.000363,
+      "tokens": 1666,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": true
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": true
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4857,
+      "cost": 0.000428,
+      "tokens": 1883,
+      "expected": 6,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 0.83,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": true
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": true
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": true
+        }
+      ],
+      "missing": [
+        "employment_type|in|[\"salaried\"]"
+      ],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4615,
+      "cost": 0.000352,
+      "tokens": 1577,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": true
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": true
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5217,
+      "cost": 0.00042,
+      "tokens": 1722,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 0.8,
+      "recall": 0.8,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": true
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": true
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [
+        "employment_type|in|[\"business_owner\",\"self_employed\"]  ≠  employment_type|in|[\"self_employed\"]"
+      ],
+      "extra": [
+        "employment_type|in|[\"self_employed\"]"
+      ]
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 2,
+      "durationMs": 7738,
+      "cost": 0.000793,
+      "tokens": 3595,
+      "expected": 5,
+      "ok": true,
+      "firstTry": false,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": true
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 3136,
+      "cost": 0.000277,
+      "tokens": 1449,
+      "expected": 4,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": true
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": true
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4139,
+      "cost": 0.000363,
+      "tokens": 1667,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": true
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": true
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 6,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": false
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": false
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|750",
+        "monthly_income|gte|30000",
+        "employment_type|in|[\"salaried\"]",
+        "age|between|[21,58]",
+        "foir|lte|0.5",
+        "loan_amount|between|[50000,1500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": false
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": false
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|680",
+        "monthly_income|gte|20000",
+        "age|between|[23,60]",
+        "foir|lte|0.6",
+        "loan_amount|lte|800000"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": false
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": false
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "employment_type|in|[\"business_owner\",\"self_employed\"]",
+        "business_vintage_months|gte|12",
+        "monthly_income|gte|15000",
+        "loan_amount|between|[10000,300000]",
+        "age|between|[21,65]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": false
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|780",
+        "monthly_income|gte|50000",
+        "city|in|[\"bengaluru\",\"chennai\",\"delhi\",\"hyderabad\",\"mumbai\",\"pune\"]",
+        "foir|lte|0.4",
+        "loan_amount|between|[100000,2500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 4,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": false
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": false
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "monthly_income|gte|10000",
+        "age|between|[21,60]",
+        "loan_amount|lte|150000",
+        "city|not_in|[\"delhi\",\"mumbai\"]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": false
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": false
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "city|in|[\"ahmedabad\",\"bengaluru\",\"chennai\",\"delhi\",\"hyderabad\",\"indore\",\"jaipur\",\"mumbai\",\"pune\"]",
+        "cibil_score|gte|750",
+        "monthly_income|gte|40000",
+        "foir|lte|0.45",
+        "loan_amount|between|[100000,2500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 6,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": false
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": false
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|750",
+        "monthly_income|gte|30000",
+        "employment_type|in|[\"salaried\"]",
+        "age|between|[21,58]",
+        "foir|lte|0.5",
+        "loan_amount|between|[50000,1500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": false
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": false
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|680",
+        "monthly_income|gte|20000",
+        "age|between|[23,60]",
+        "foir|lte|0.6",
+        "loan_amount|lte|800000"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": false
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": false
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "employment_type|in|[\"business_owner\",\"self_employed\"]",
+        "business_vintage_months|gte|12",
+        "monthly_income|gte|15000",
+        "loan_amount|between|[10000,300000]",
+        "age|between|[21,65]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": false
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|780",
+        "monthly_income|gte|50000",
+        "city|in|[\"bengaluru\",\"chennai\",\"delhi\",\"hyderabad\",\"mumbai\",\"pune\"]",
+        "foir|lte|0.4",
+        "loan_amount|between|[100000,2500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 4,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": false
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": false
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "monthly_income|gte|10000",
+        "age|between|[21,60]",
+        "loan_amount|lte|150000",
+        "city|not_in|[\"delhi\",\"mumbai\"]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": false
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": false
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "city|in|[\"ahmedabad\",\"bengaluru\",\"chennai\",\"delhi\",\"hyderabad\",\"indore\",\"jaipur\",\"mumbai\",\"pune\"]",
+        "cibil_score|gte|750",
+        "monthly_income|gte|40000",
+        "foir|lte|0.45",
+        "loan_amount|between|[100000,2500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 6,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": false
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": false
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|750",
+        "monthly_income|gte|30000",
+        "employment_type|in|[\"salaried\"]",
+        "age|between|[21,58]",
+        "foir|lte|0.5",
+        "loan_amount|between|[50000,1500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": false
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": false
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|680",
+        "monthly_income|gte|20000",
+        "age|between|[23,60]",
+        "foir|lte|0.6",
+        "loan_amount|lte|800000"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": false
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": false
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "employment_type|in|[\"business_owner\",\"self_employed\"]",
+        "business_vintage_months|gte|12",
+        "monthly_income|gte|15000",
+        "loan_amount|between|[10000,300000]",
+        "age|between|[21,65]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": false
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "cibil_score|gte|780",
+        "monthly_income|gte|50000",
+        "city|in|[\"bengaluru\",\"chennai\",\"delhi\",\"hyderabad\",\"mumbai\",\"pune\"]",
+        "foir|lte|0.4",
+        "loan_amount|between|[100000,2500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 4,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": false
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": false
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "monthly_income|gte|10000",
+        "age|between|[21,60]",
+        "loan_amount|lte|150000",
+        "city|not_in|[\"delhi\",\"mumbai\"]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "anthropic/claude-sonnet-4.5",
+      "attempts": 0,
+      "durationMs": 0,
+      "cost": 0,
+      "tokens": 0,
+      "expected": 5,
+      "ok": false,
+      "firstTry": false,
+      "matched": 0,
+      "precision": 0,
+      "recall": 0,
+      "rateCorrect": false,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": false
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": false
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": false
+        }
+      ],
+      "missing": [
+        "city|in|[\"ahmedabad\",\"bengaluru\",\"chennai\",\"delhi\",\"hyderabad\",\"indore\",\"jaipur\",\"mumbai\",\"pune\"]",
+        "cibil_score|gte|750",
+        "monthly_income|gte|40000",
+        "foir|lte|0.45",
+        "loan_amount|between|[100000,2500000]"
+      ],
+      "wrong": [],
+      "extra": [],
+      "error": "OpenRouter 402 for model \"anthropic/claude-sonnet-4.5\": {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 8000 tokens, but can only afford 1295. To incr"
+    }
+  ]
+}

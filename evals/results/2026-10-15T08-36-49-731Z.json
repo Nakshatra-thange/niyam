@@ -1,0 +1,611 @@
+{
+  "models": [
+    "openai/gpt-4o-mini"
+  ],
+  "runs": 3,
+  "summaries": [
+    {
+      "model": "openai/gpt-4o-mini",
+      "cases": 18,
+      "passedValidation": 18,
+      "firstTryRate": 0.89,
+      "recall": 1,
+      "precision": 1,
+      "exactRulesets": 18,
+      "trapsPassed": 51,
+      "trapsTotal": 51,
+      "avgSeconds": 5.32,
+      "totalCost": 0.0084
+    }
+  ],
+  "scores": [
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 7250,
+      "cost": 0.000551,
+      "tokens": 2015,
+      "expected": 6,
+      "ok": true,
+      "firstTry": true,
+      "matched": 6,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": true
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": true
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4573,
+      "cost": 0.000443,
+      "tokens": 1688,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": true
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": true
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": [
+        "employment_type|in|[\"salaried\",\"self_employed\"]"
+      ]
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5226,
+      "cost": 0.000522,
+      "tokens": 1835,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": true
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": true
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 2,
+      "durationMs": 8887,
+      "cost": 0.000834,
+      "tokens": 3841,
+      "expected": 5,
+      "ok": true,
+      "firstTry": false,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": true
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 3251,
+      "cost": 0.000371,
+      "tokens": 1565,
+      "expected": 4,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": true
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": true
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4911,
+      "cost": 0.000472,
+      "tokens": 1792,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": true
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": true
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 6244,
+      "cost": 0.000504,
+      "tokens": 2114,
+      "expected": 6,
+      "ok": true,
+      "firstTry": true,
+      "matched": 6,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": true
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": true
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4385,
+      "cost": 0.000357,
+      "tokens": 1689,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": true
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": true
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": [
+        "employment_type|in|[\"salaried\",\"self_employed\"]"
+      ]
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5727,
+      "cost": 0.000437,
+      "tokens": 1837,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": true
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": true
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 2,
+      "durationMs": 8863,
+      "cost": 0.000835,
+      "tokens": 3844,
+      "expected": 5,
+      "ok": true,
+      "firstTry": false,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": true
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 3273,
+      "cost": 0.000285,
+      "tokens": 1567,
+      "expected": 4,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": true
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": true
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4427,
+      "cost": 0.000377,
+      "tokens": 1793,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": true
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": true
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "suvidha.pdf",
+      "lenderId": "suvidha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5955,
+      "cost": 0.000479,
+      "tokens": 2072,
+      "expected": 6,
+      "ok": true,
+      "firstTry": true,
+      "matched": 6,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "applies the annexure amendment (CIBIL 750, not 720)",
+          "passed": true
+        },
+        {
+          "name": "annual ₹3,60,000 → ₹30,000/month",
+          "passed": true
+        },
+        {
+          "name": "FOIR 50% → 0.5",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "dhanrekha.pdf",
+      "lenderId": "dhanrekha",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5052,
+      "cost": 0.000401,
+      "tokens": 1761,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "Hinglish '23 se 60 saal' → age 23–60",
+          "passed": true
+        },
+        {
+          "name": "'Rs. 20k per month' → 20000",
+          "passed": true
+        },
+        {
+          "name": "'8 lakh', no minimum → loan ≤ 800000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": [
+        "employment_type|in|[\"salaried\",\"self_employed\"]"
+      ]
+    },
+    {
+      "case": "kirana-credit.pdf",
+      "lenderId": "kirana-credit",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 5224,
+      "cost": 0.000435,
+      "tokens": 1835,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "monthly interest 1.5–2.5% → 18–30% p.a.",
+          "passed": true
+        },
+        {
+          "name": "'score not mandatory' → no CIBIL rule",
+          "passed": true
+        },
+        {
+          "name": "reads the table: loan ₹10,000–₹3,00,000",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4232,
+      "cost": 0.000442,
+      "tokens": 1684,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "all six metro cities",
+          "passed": true
+        },
+        {
+          "name": "FOIR 40% → 0.4",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "pragati.pdf",
+      "lenderId": "pragati",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 3388,
+      "cost": 0.000284,
+      "tokens": 1565,
+      "expected": 4,
+      "ok": true,
+      "firstTry": true,
+      "matched": 4,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "annual household ₹1,20,000 → ₹10,000/month",
+          "passed": true
+        },
+        {
+          "name": "'not offered in Mumbai or Delhi' → not_in",
+          "passed": true
+        },
+        {
+          "name": "states (MP, MH…) are not invented as cities",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    },
+    {
+      "case": "metro-bank-v2.pdf",
+      "lenderId": "metro-bank",
+      "model": "openai/gpt-4o-mini",
+      "attempts": 1,
+      "durationMs": 4858,
+      "cost": 0.000377,
+      "tokens": 1793,
+      "expected": 5,
+      "ok": true,
+      "firstTry": true,
+      "matched": 5,
+      "precision": 1,
+      "recall": 1,
+      "rateCorrect": true,
+      "traps": [
+        {
+          "name": "new Tier-2 cities included (9 total)",
+          "passed": true
+        },
+        {
+          "name": "uses revised CIBIL 750, not old 780",
+          "passed": true
+        },
+        {
+          "name": "rate 10.75–16.5%",
+          "passed": true
+        }
+      ],
+      "missing": [],
+      "wrong": [],
+      "extra": []
+    }
+  ]
+}

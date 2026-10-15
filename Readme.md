@@ -21,7 +21,36 @@ Priya (Indore, CIBIL 760) applies and Metro SFB rejects her: wrong city, score t
 
 ## Agent eval results
 
-<!-- paste evals/results/latest.md here after `npm run eval` -->
+2026-10-15 · 18 extractions per model (3 run(s) × 6 documents)
+
+| Model | Valid | First try | Recall | Precision | Exact rulesets | Traps caught | Avg time | Cost |
+|---|---|---|---|---|---|---|---|---|
+| `openai/gpt-4o-mini` | 18/18 | 89% | 100% | 100% | 18/18 | 51/51 | 5.32s | $0.0084 |
+
+**Recall**: of the rules a human wrote, how many the agent got exactly right. **Precision**: of the rules the agent produced, how many were right. **Traps**: the specific hard parts of each document (amendments, unit conversions, Hinglish, tables).
+
+## Per document
+
+| Model | Document | Valid | Attempts | Rules | Rate | Traps | Problems |
+|---|---|---|---|---|---|---|---|
+| `openai/gpt-4o-mini` | suvidha.pdf | ✓ | 1 | 6/6 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | dhanrekha.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | extra employment_type\|in\|["salaried","self_employed"] |
+| `openai/gpt-4o-mini` | kirana-credit.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | metro-bank.pdf | ✓ | 2 | 5/5 | ✓ | 2/2 | — |
+| `openai/gpt-4o-mini` | pragati.pdf | ✓ | 1 | 4/4 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | metro-bank-v2.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | suvidha.pdf | ✓ | 1 | 6/6 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | dhanrekha.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | extra employment_type\|in\|["salaried","self_employed"] |
+| `openai/gpt-4o-mini` | kirana-credit.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | metro-bank.pdf | ✓ | 2 | 5/5 | ✓ | 2/2 | — |
+| `openai/gpt-4o-mini` | pragati.pdf | ✓ | 1 | 4/4 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | metro-bank-v2.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | suvidha.pdf | ✓ | 1 | 6/6 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | dhanrekha.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | extra employment_type\|in\|["salaried","self_employed"] |
+| `openai/gpt-4o-mini` | kirana-credit.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | metro-bank.pdf | ✓ | 1 | 5/5 | ✓ | 2/2 | — |
+| `openai/gpt-4o-mini` | pragati.pdf | ✓ | 1 | 4/4 | ✓ | 3/3 | — |
+| `openai/gpt-4o-mini` | metro-bank-v2.pdf | ✓ | 1 | 5/5 | ✓ | 3/3 | — |
 
 Six policy documents with deliberate traps: an annexure amendment that overrides an earlier clause, annual income that must be converted to monthly, Hinglish phrasing, interest quoted per month, "credit score not mandatory", operating states that must *not* become city rules.
 

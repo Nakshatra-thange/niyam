@@ -81,6 +81,17 @@ describe("validator", () => {
     ex.rules.push({ id: "cibil-old", field: "cibil_score", op: "gte", value: 720, message: "CIBIL 720+", citation: cite(1, "Applicants must have a CIBIL score of 720 or above") });
     expect(validateExtraction(ex, pages, "suvidha").errors.join()).toContain("all test cibil_score gte");
   });
+  it("warns the reviewer when the policy restricts employment but no rule does (the real gpt-4o-mini miss)", () => {
+    const ex = goodExtraction();
+    ex.rules = ex.rules.filter((r) => r.field !== "employment_type");
+    const v = validateExtraction(ex, pages, "suvidha");
+    expect(v.ok).toBe(true); // not an error: sometimes leaving it out is right
+    expect(v.warnings.join()).toContain("mentions employment type but no rule uses it");
+  });
+
+  it("a complete extraction triggers no coverage warnings", () => {
+    expect(validateExtraction(goodExtraction(), pages, "suvidha").warnings.filter((w) => w.startsWith("coverage"))).toEqual([]);
+  });
 
   it("warns when a number doesn't appear in its own quote", () => {
     const ex = goodExtraction();

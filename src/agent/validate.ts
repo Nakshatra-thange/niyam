@@ -36,6 +36,14 @@ const BOUNDS: Partial<Record<Field, [number, number]>> = {
   loan_amount: [1_000, 100_000_000],
   foir: [0.05, 1],
 };
+// Words that mean a policy is talking about a field. Used only for reviewer warnings.
+const MENTIONS: Partial<Record<Field, RegExp>> = {
+  employment_type: /\b(salaried|self[- ]employed|proprietors?|business owners?|shop owners?)\b/i,
+  cibil_score: /\b(cibil|bureau score|credit score)\b/i,
+  age: /\bage\b/i,
+  loan_amount: /\b(loan amount|ticket size)\b/i,
+  foir: /\b(foir|existing emis?|fixed obligations)\b/i,
+};
 
 /** Lowercase, collapse whitespace, unify quotes and dashes: PDF text is messy. */
 export const normalize = (s: string) =>
@@ -143,6 +151,13 @@ export function validateExtraction(raw: unknown, pages: string[], lenderId: stri
   if (ex.interestRateMin < 5 || ex.interestRateMax > 60) errors.push(`interest rate ${ex.interestRateMin}–${ex.interestRateMax}% looks wrong. Annual % expected.`);
 
   if (rules.length === 0) errors.push("no rules extracted");
+    // Coverage: the policy talks about a field but no rule uses it. Sometimes correct ("score not
+  // mandatory"), sometimes a silent miss (a dropped "salaried only"). A human decides.
+  const fullText = pages.join("\n");
+  const usedFields = new Set(rules.map((r) => r.field));
+  for (const [field, re] of Object.entries(MENTIONS) as [Field, RegExp][]) {
+    if (re.test(fullText) && !usedFields.has(field)) warnings.push(`coverage: the policy mentions ${field.replace(/_/g, " ")} but no rule uses it. Confirm that's intentional.`);
+  }
   ex.unsupported_clauses.forEach((u) => warnings.push(`needs human: clause not representable (p${u.page}): "${u.quote.slice(0, 80)}" — ${u.why}`));
   ex.ambiguities.forEach((a) => warnings.push(`ambiguous (p${a.page}): "${a.quote.slice(0, 80)}" — ${a.note}`));
 
