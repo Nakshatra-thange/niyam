@@ -1,132 +1,103 @@
 import { describe, expect, it } from "vitest";
-import { deriveFields, evaluateLender, evaluateRule, route } from "../src/rules/engine.js";
+import { route, evaluateLender } from "../src/rules/engine.js";
 import { SEED_RULESETS } from "../src/rules/seed-rules.js";
-import type { ApplicantProfile, Rule } from "../src/rules/schema.js";
+import { ApplicantProfileSchema, LenderRulesetSchema, RuleSchema } from "../src/rules/schema.js";
 
-const sampleProfile: ApplicantProfile = {
-  name: "Aarav Sharma",
-  phone: "9876543210",
-  pan: "ABCDE1234F",
-  age: 30,
-  city: "mumbai",
-  employment_type: "salaried",
-  monthly_income: 60000,
-  existing_emi: 15000,
-  cibil_score: 800,
-  loan_amount: 500000,
-};
-
-describe("engine: deriveFields", () => {
-  it("derives all required fields and calculates FOIR correctly", () => {
-    const fields = deriveFields(sampleProfile);
-    expect(fields.cibil_score).toBe(800);
-    expect(fields.monthly_income).toBe(60000);
-    expect(fields.age).toBe(30);
-    expect(fields.city).toBe("mumbai");
-    expect(fields.employment_type).toBe("salaried");
-    expect(fields.loan_amount).toBe(500000);
-    expect(fields.business_vintage_months).toBeNull();
-    // 15000 / 60000 = 0.25
-    expect(fields.foir).toBe(0.25);
+const profile = (overrides: Record<string, unknown> = {}) =>
+  ApplicantProfileSchema.parse({
+    name: "Asha Verma",
+    phone: "9876543210",
+    pan: "ABCDE1234F",
+    age: 30,
+    city: "Pune",
+    employment_type: "salaried",
+    monthly_income: 60000,
+    existing_emi: 10000,
+    cibil_score: 790,
+    loan_amount: 300000,
+    ...overrides,
   });
 
-  it("sets foir to null when monthly_income is 0", () => {
-    const fields = deriveFields({ ...sampleProfile, monthly_income: 0, existing_emi: 5000 });
-    expect(fields.foir).toBeNull();
-  });
+const byId = (id: string) => SEED_RULESETS.find((r) => r.lenderId === id)!;
 
-  it("preserves business_vintage_months when provided", () => {
-    const fields = deriveFields({ ...sampleProfile, business_vintage_months: 36 });
-    expect(fields.business_vintage_months).toBe(36);
+describe("seed data", () => {
+  it("every seed ruleset is valid against the DSL", () => {
+    for (const rs of SEED_RULESETS) expect(() => LenderRulesetSchema.parse(rs)).not.toThrow();
   });
 });
 
-describe("engine: evaluateRule", () => {
-  const fields = deriveFields(sampleProfile);
-
-  it("handles gte and lte operators", () => {
-    const gteRule: Rule = { id: "cibil-gte", field: "cibil_score", op: "gte", value: 750, message: "CIBIL >= 750" };
-    expect(evaluateRule(gteRule, fields).passed).toBe(true);
-
-    const gteFail: Rule = { id: "cibil-gte-fail", field: "cibil_score", op: "gte", value: 850, message: "CIBIL >= 850" };
-    expect(evaluateRule(gteFail, fields).passed).toBe(false);
-
-    const lteRule: Rule = { id: "foir-lte", field: "foir", op: "lte", value: 0.5, message: "FOIR <= 50%" };
-    expect(evaluateRule(lteRule, fields).passed).toBe(true);
-
-    const lteFail: Rule = { id: "foir-lte-fail", field: "foir", op: "lte", value: 0.2, message: "FOIR <= 20%" };
-    expect(evaluateRule(lteFail, fields).passed).toBe(false);
+describe("DSL validation", () => {
+  it("rejects between with min > max", () => {
+    expect(() => RuleSchema.parse({ id: "x", field: "age", op: "between", value: [60, 21], message: "bad range" })).toThrow();
   });
-
-  it("handles eq operator (case and whitespace insensitive)", () => {
-    const eqRule: Rule = { id: "emp-eq", field: "employment_type", op: "eq", value: "Salaried", message: "Salaried only" };
-    expect(evaluateRule(eqRule, fields).passed).toBe(true);
-
-    const eqFail: Rule = { id: "emp-eq-fail", field: "employment_type", op: "eq", value: "self_employed", message: "Self-employed only" };
-    expect(evaluateRule(eqFail, fields).passed).toBe(false);
+  it("rejects gte with a string value", () => {
+    expect(() => RuleSchema.parse({ id: "x", field: "cibil_score", op: "gte", value: "700", message: "wrong type" })).toThrow();
   });
-
-  it("handles in and not_in operators", () => {
-    const inRule: Rule = { id: "city-in", field: "city", op: "in", value: ["Mumbai", "Delhi"], message: "Metro only" };
-    expect(evaluateRule(inRule, fields).passed).toBe(true);
-
-    const inFail: Rule = { id: "city-in-fail", field: "city", op: "in", value: ["Pune", "Delhi"], message: "Selected cities only" };
-    expect(evaluateRule(inFail, fields).passed).toBe(false);
-
-    const notInRule: Rule = { id: "city-notin", field: "city", op: "not_in", value: ["Kolkata", "Chennai"], message: "Not in Kolkata or Chennai" };
-    expect(evaluateRule(notInRule, fields).passed).toBe(true);
-
-    const notInFail: Rule = { id: "city-notin-fail", field: "city", op: "not_in", value: ["Mumbai", "Chennai"], message: "Not in Mumbai" };
-    expect(evaluateRule(notInFail, fields).passed).toBe(false);
-  });
-
-  it("handles between operator", () => {
-    const betweenRule: Rule = { id: "age-between", field: "age", op: "between", value: [21, 58], message: "Age 21-58" };
-    expect(evaluateRule(betweenRule, fields).passed).toBe(true);
-
-    const betweenFail: Rule = { id: "age-between-fail", field: "age", op: "between", value: [35, 60], message: "Age 35-60" };
-    expect(evaluateRule(betweenFail, fields).passed).toBe(false);
-  });
-
-  it("fails closed on null or undefined actual values", () => {
-    const rule: Rule = { id: "vintage-rule", field: "business_vintage_months", op: "gte", value: 12, message: "Vintage >= 12" };
-    const res = evaluateRule(rule, fields); // business_vintage_months is null
-    expect(res.passed).toBe(false);
-    expect(res.actual).toBeNull();
+  it("rejects unknown fields", () => {
+    expect(() => RuleSchema.parse({ id: "x", field: "shoe_size", op: "gte", value: 9, message: "nope" })).toThrow();
   });
 });
 
-describe("engine: evaluateLender and route", () => {
-  it("evaluates a lender and calculates headroom when eligible", () => {
-    const suvidha = SEED_RULESETS.find((s) => s.lenderId === "suvidha")!;
-    const decision = evaluateLender(suvidha, sampleProfile);
-    expect(decision.eligible).toBe(true);
-    expect(decision.headroom).toBeGreaterThan(0);
-    expect(decision.reasons[0]).toContain("Meets all");
+describe("evaluateLender", () => {
+  it("strong salaried metro applicant clears Metro bank", () => {
+    const d = evaluateLender(byId("metro-bank"), profile());
+    expect(d.eligible).toBe(true);
+    expect(d.headroom).toBeGreaterThan(0);
   });
 
-  it("marks decision ineligible with reasons when rules fail", () => {
-    const suvidha = SEED_RULESETS.find((s) => s.lenderId === "suvidha")!;
-    const poorScoreProfile: ApplicantProfile = { ...sampleProfile, cibil_score: 600 };
-    const decision = evaluateLender(suvidha, poorScoreProfile);
-    expect(decision.eligible).toBe(false);
-    expect(decision.headroom).toBe(0);
-    expect(decision.reasons.some((r) => r.includes("CIBIL") && r.includes("600"))).toBe(true);
+  it("explains every failed rule with the applicant's actual value", () => {
+    const d = evaluateLender(byId("metro-bank"), profile({ cibil_score: 720, city: "Indore" }));
+    expect(d.eligible).toBe(false);
+    expect(d.reasons).toHaveLength(2);
+    expect(d.reasons.join(" ")).toContain("you: 720");
+    expect(d.reasons.join(" ")).toContain("you: indore");
   });
 
-  it("routes lenders sorted by interestRateMin, headroom, and lenderId", () => {
-    const result = route(SEED_RULESETS, sampleProfile);
-    expect(result.eligible.length).toBeGreaterThan(0);
+  it("fails closed when data is missing (new-to-credit has no CIBIL)", () => {
+    const d = evaluateLender(byId("suvidha"), profile({ cibil_score: null }));
+    expect(d.eligible).toBe(false);
+    expect(d.reasons.join(" ")).toContain("not provided");
+  });
 
-    // Verify ordering by interestRateMin ascending
-    for (let i = 1; i < result.eligible.length; i++) {
-      const prev = result.eligible[i - 1];
-      const curr = result.eligible[i];
-      if (prev.interestRateMin === curr.interestRateMin) {
-        expect(prev.headroom).toBeGreaterThanOrEqual(curr.headroom);
-      } else {
-        expect(prev.interestRateMin).toBeLessThanOrEqual(curr.interestRateMin);
-      }
-    }
+  it("computes FOIR from existing EMI / income", () => {
+    // 35k EMI on 60k income = 0.58 FOIR, above Suvidha's 0.5 cap
+    const d = evaluateLender(byId("suvidha"), profile({ existing_emi: 35000 }));
+    expect(d.eligible).toBe(false);
+    expect(d.results.find((r) => r.field === "foir")?.actual).toBeCloseTo(0.5833, 3);
+  });
+
+  it("city matching is case- and whitespace-insensitive", () => {
+    const d = evaluateLender(byId("metro-bank"), profile({ city: "  BENGALURU " }));
+    expect(d.eligible).toBe(true);
+  });
+});
+
+describe("route", () => {
+  it("ranks eligible lenders cheapest first", () => {
+    const r = route(SEED_RULESETS, profile());
+    const rates = r.eligible.map((d) => d.interestRateMin);
+    expect(rates).toEqual([...rates].sort((a, b) => a - b));
+    expect(r.eligible[0].lenderId).toBe("metro-bank");
+  });
+
+  it("shop owner routes only to business lenders", () => {
+    const r = route(
+      SEED_RULESETS,
+      profile({ employment_type: "business_owner", business_vintage_months: 30, monthly_income: 25000, cibil_score: null, city: "Ashta", loan_amount: 100000 }),
+    );
+    expect(r.eligible.map((d) => d.lenderId)).toEqual(["kirana-credit", "pragati"]);
+  });
+
+  it("returns no eligible lenders when nobody fits, with reasons for all", () => {
+    const r = route(SEED_RULESETS, profile({ monthly_income: 5000, loan_amount: 5000000 }));
+    expect(r.eligible).toHaveLength(0);
+    expect(r.ineligible).toHaveLength(SEED_RULESETS.length);
+    r.ineligible.forEach((d) => expect(d.reasons.length).toBeGreaterThan(0));
+  });
+
+  it("is deterministic", () => {
+    const a = route(SEED_RULESETS, profile());
+    const b = route([...SEED_RULESETS].reverse(), profile());
+    expect(a.eligible.map((d) => d.lenderId)).toEqual(b.eligible.map((d) => d.lenderId));
   });
 });

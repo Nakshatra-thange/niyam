@@ -13,6 +13,7 @@ describe("canonical rule form", () => {
   it("eq X equals in [X]; lists ignore order and case", () => {
     expect(canonical({ field: "employment_type", op: "eq", value: "salaried" })).toBe(canonical({ field: "employment_type", op: "in", value: ["Salaried"] }));
     expect(canonical({ field: "city", op: "in", value: ["pune", "delhi"] })).toBe(canonical({ field: "city", op: "in", value: ["Delhi", "PUNE"] }));
+    expect(canonical({ field: "employment_type", op: "not_in", value: ["self_employed", "business_owner"] })).toBe(canonical({ field: "employment_type", op: "eq", value: "salaried" }));
   });
 });
 

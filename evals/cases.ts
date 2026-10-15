@@ -1,11 +1,7 @@
 import { SEED_RULESETS } from "../src/rules/seed-rules.js";
-import type { LenderRuleset, Rule } from "../src/rules/schema.js";
+import { ApplicantProfileSchema, type LenderRuleset, type Rule } from "../src/rules/schema.js";
+const EMPLOYMENT_TYPES: string[] = [...ApplicantProfileSchema.shape.employment_type.options];
 
-/**
- * Eval cases: each policy document + the rules a careful human would write.
- * "Traps" are the specific things that make each document hard; they tell you
- * WHY a model failed, not just that it did.
- */
 export type Trap = { name: string; check: (rs: LenderRuleset) => boolean };
 export type EvalCase = {
   lenderId: string;
@@ -21,6 +17,12 @@ export function canonical(r: Pick<Rule, "field" | "op" | "value">): string {
   let op = r.op;
   let value: unknown = r.value;
   if (op === "eq") { op = "in"; value = [value]; }
+    // employment_type is a closed set, so "not self-employed or business owner" == "salaried".
+    if (r.field === "employment_type" && op === "not_in") {
+      const excluded = (value as string[]).map((s) => s.trim().toLowerCase());
+      op = "in";
+      value = EMPLOYMENT_TYPES.filter((e) => !excluded.includes(e));
+    }
   if (Array.isArray(value) && typeof value[0] === "string") value = (value as string[]).map((s) => s.trim().toLowerCase()).sort();
   return `${r.field}|${op}|${JSON.stringify(value)}`;
 }

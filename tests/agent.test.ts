@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { extractPages } from "../src/agent/pdf.js";
-import { extractRuleset, type ModelFn } from "../src/agent/extract.js";
+import { extractRuleset } from "../src/agent/extract.js";
+import type { ChatMessage, Model } from "../src/agent/model.js";
 import { numbersIn, validateExtraction } from "../src/agent/validate.js";
 import { compareRulesets } from "../src/agent/compare.js";
 import { SEED_RULESETS } from "../src/rules/seed-rules.js";
 
-// Tests run against the real generated PDF (npx tsx scripts/make-policy-pdfs.ts),
+// Tests run against the real generated PDF (npm run policies:pdf),
 // so they also prove quote-matching survives PDF line wrapping.
 const pages = await extractPages("policies/suvidha.pdf");
 
@@ -29,15 +30,21 @@ const goodExtraction = () => ({
   ambiguities: [],
 });
 
-/** A fake model that returns scripted answers, one per call, and records what it was sent. */
+/** A fake model: returns scripted tool calls, one per call, and records what it was sent. */
 function fakeModel(answers: unknown[]) {
-  const calls: any[] = [];
-  const fn: ModelFn = async (req) => {
-    calls.push(JSON.parse(JSON.stringify(req)));
-    const input = answers[Math.min(calls.length - 1, answers.length - 1)];
-    return { content: [{ type: "tool_use", id: `tool_${calls.length}`, name: "submit_ruleset", input } as any] };
+  const calls: ChatMessage[][] = [];
+  const model: Model = {
+    name: "fake",
+    call: async (messages) => {
+      calls.push(structuredClone(messages));
+      const input = answers[Math.min(calls.length - 1, answers.length - 1)];
+      return {
+        message: { role: "assistant", content: null, tool_calls: [{ id: `call_${calls.length}`, type: "function", function: { name: "submit_ruleset", arguments: JSON.stringify(input) } }] },
+        usage: { promptTokens: 1000, completionTokens: 500, cost: 0.01 },
+      };
+    },
   };
-  return { fn, calls };
+  return { model, calls };
 }
 
 describe("validator", () => {
@@ -81,6 +88,15 @@ describe("validator", () => {
     expect(validateExtraction(ex, pages, "suvidha").warnings.join()).toContain("1000000 does not visibly appear");
   });
 
+  it("rejects a split min/max and asks for one between rule", () => {
+    const ex = goodExtraction();
+    ex.rules.splice(3, 1,
+      { id: "age-min", field: "age", op: "gte", value: 21, message: "21+", citation: cite(1, "Minimum age of the applicant shall be 21 years") },
+      { id: "age-max", field: "age", op: "lte", value: 58, message: "58 max", citation: cite(1, "Maximum age shall be 58 years") } as any);
+    const errs = validateExtraction(ex, pages, "suvidha").errors.join();
+    expect(errs).toContain('Merge them into ONE rule: op "between", value [21, 58]');
+  });
+
   it("understands Indian number formats", () => {
     expect(numbersIn("Rs. 15 lakh")).toContain(1500000);
     expect(numbersIn("Rs. 3,60,000 per annum")).toContain(30000);
@@ -92,36 +108,44 @@ describe("validator", () => {
 
 describe("agent loop", () => {
   it("passes first time when the model is right, and matches the hand-written rules 100%", async () => {
-    const { fn, calls } = fakeModel([goodExtraction()]);
-    const report = await extractRuleset({ pages, lenderId: "suvidha", model: fn });
+    const { model, calls } = fakeModel([goodExtraction()]);
+    const report = await extractRuleset({ pages, lenderId: "suvidha", model });
     expect(report.ok).toBe(true);
     expect(report.attempts).toBe(1);
     expect(calls).toHaveLength(1);
+    expect(report.usage.cost).toBeCloseTo(0.01);
     const cmp = compareRulesets(SEED_RULESETS.find((s) => s.lenderId === "suvidha")!, report.result.ruleset!);
     expect(cmp.score).toBe(1);
   });
 
-  it("feeds validation errors back and accepts the corrected answer", async () => {
+  it("feeds validation errors back as a tool message and accepts the corrected answer", async () => {
     const bad = goodExtraction();
     bad.rules[1].value = 360000; // forgot to convert annual -> monthly
-    const { fn, calls } = fakeModel([bad, goodExtraction()]);
-    const report = await extractRuleset({ pages, lenderId: "suvidha", model: fn });
+    const { model, calls } = fakeModel([bad, goodExtraction()]);
+    const report = await extractRuleset({ pages, lenderId: "suvidha", model });
 
     expect(report.ok).toBe(true);
     expect(report.attempts).toBe(2);
-    // The second request must carry the exact error back to the model as a tool_result.
-    const feedback = calls[1].messages.at(-1).content[0];
-    expect(feedback.type).toBe("tool_result");
-    expect(feedback.is_error).toBe(true);
+    expect(report.usage.cost).toBeCloseTo(0.02);
+    // Second request = system, user, assistant(tool_call), tool(errors)
+    const feedback = calls[1].at(-1)!;
+    expect(feedback.role).toBe("tool");
+    expect(feedback.role === "tool" && feedback.tool_call_id).toBe("call_1");
     expect(feedback.content).toContain("Divide by 12");
   });
 
   it("gives up after 3 attempts instead of looping forever", async () => {
     const bad = goodExtraction();
     bad.rules[0].citation = cite(1, "made up quote that is not in the doc");
-    const { fn, calls } = fakeModel([bad]);
-    const report = await extractRuleset({ pages, lenderId: "suvidha", model: fn });
+    const { model, calls } = fakeModel([bad]);
+    const report = await extractRuleset({ pages, lenderId: "suvidha", model });
     expect(report.ok).toBe(false);
     expect(calls).toHaveLength(3);
+  });
+
+  it("accepts JSON in plain text from models that ignore tool_choice", async () => {
+    const model: Model = { name: "texty", call: async () => ({ message: { role: "assistant", content: "Here you go:\n" + JSON.stringify(goodExtraction()) } }) };
+    const report = await extractRuleset({ pages, lenderId: "suvidha", model });
+    expect(report.ok).toBe(true);
   });
 });

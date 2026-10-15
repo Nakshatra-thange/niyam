@@ -1,10 +1,6 @@
 import type { ApplicantProfile } from "../rules/schema.js";
 
-/**
- * One adapter per lender. Each turns our unified profile into that lender's
- * request format, and turns its response (or webhook) back into one Outcome.
- * Everything lender-specific lives here and nowhere else.
- */
+
 
 export type Outcome =
   | { kind: "approved"; ref: string; rate?: number }
