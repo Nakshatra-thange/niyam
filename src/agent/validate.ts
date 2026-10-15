@@ -127,6 +127,15 @@ export function validateExtraction(raw: unknown, pages: string[], lenderId: stri
   const byFieldOp = new Map<string, string[]>();
   rules.forEach((r) => byFieldOp.set(`${r.field}:${r.op}`, [...(byFieldOp.get(`${r.field}:${r.op}`) ?? []), r.id]));
   for (const [k, ids] of byFieldOp) if (ids.length > 1) errors.push(`rules ${ids.join(", ")} all test ${k.replace(":", " ")}. Keep one (the latest amendment) or merge into a between rule.`);
+  // A minimum and a maximum on the same field must be ONE "between" rule. The engine would
+  // evaluate a split pair fine, but reviewers diff rules by field + operator, so a split pair
+  // shows up as unrelated rules and makes version-to-version diffs misleading.
+  for (const field of new Set(rules.map((r) => r.field))) {
+    const sameField = rules.filter((r) => r.field === field);
+    const lo = sameField.find((r) => r.op === "gte");
+    const hi = sameField.find((r) => r.op === "lte");
+    if (lo && hi) errors.push(`${field} has a separate minimum (${lo.id}) and maximum (${hi.id}). Merge them into ONE rule: op "between", value [${lo.value}, ${hi.value}].`);
+  }
 
   // Rates.
   checkCitation("rateCitation", ex.rateCitation);

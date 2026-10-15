@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ADAPTERS, FatalError } from "../src/lenders/adapters.js";
 import { backoffMs } from "../src/queue/queue.js";
 import { ApplicantProfileSchema } from "../src/rules/schema.js";
@@ -44,14 +44,43 @@ describe("backoff", () => {
   it("respects Retry-After", () => expect(backoffMs(1, 10_000)).toBe(10_000));
 });
 
-const hasRedis = !!process.env.REDIS_URL;
-describe.skipIf(!hasRedis)("circuit breaker", async () => {
-  const { CircuitBreaker } = await import("../src/lib/circuit-breaker.js");
-  const { createRedis } = await import("../src/lib/redis.js");
-  const redis = createRedis();
+async function canConnectRedis(url: string | undefined): Promise<boolean> {
+  if (!url) return false;
+  try {
+    const { Redis } = await import("ioredis");
+    const client = new Redis(url, {
+      connectTimeout: 500,
+      maxRetriesPerRequest: 0,
+      retryStrategy: () => null,
+      lazyConnect: true,
+    });
+    client.on("error", () => {});
+    await client.connect();
+    await client.ping();
+    await client.quit();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const hasRedis = await canConnectRedis(process.env.REDIS_URL);
+describe.skipIf(!hasRedis)("circuit breaker", () => {
+  let redis: any;
+  let cb: any;
   const lender = `test-${Date.now()}`;
-  const cb = new CircuitBreaker(redis, { failureThreshold: 3, windowMs: 5000, cooldownMs: 300, probeTimeoutMs: 1000 });
-  afterAll(() => redis.quit());
+
+  beforeAll(async () => {
+    const { CircuitBreaker } = await import("../src/lib/circuit-breaker.js");
+    const { createRedis } = await import("../src/lib/redis.js");
+    redis = createRedis();
+    redis.on("error", () => {});
+    cb = new CircuitBreaker(redis, { failureThreshold: 3, windowMs: 5000, cooldownMs: 300, probeTimeoutMs: 1000 });
+  });
+
+  afterAll(async () => {
+    await redis?.quit();
+  });
 
   it("closed -> open after threshold failures", async () => {
     expect(await cb.state(lender)).toBe("closed");

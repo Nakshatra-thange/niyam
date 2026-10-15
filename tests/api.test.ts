@@ -28,7 +28,6 @@ describe.skipIf(!hasDb)("API", async () => {
   beforeAll(async () => app.ready());
   afterAll(async () => {
     await app.close();
-    await pool.end();
   });
 
   it("rejects a request without an Idempotency-Key", async () => {

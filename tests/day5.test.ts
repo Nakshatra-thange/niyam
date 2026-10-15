@@ -35,7 +35,6 @@ describe.skipIf(!hasDb)("Day 5: review workflow", async () => {
     await pool.query(`DELETE FROM rulesets WHERE lender_id = $1`, [LENDER]);
     await pool.query(`DELETE FROM lenders WHERE id = $1`, [LENDER]);
     await app.close();
-    await pool.end();
   });
 
   let v1: number;

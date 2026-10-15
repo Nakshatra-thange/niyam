@@ -5,9 +5,24 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set. Copy .env.example to .env and fill it in.");
 }
 
-export const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-  max: 10,
+function createPool() {
+  return new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 10,
+    allowExitOnIdle: true,
+  });
+}
+
+let activePool = createPool();
+
+export const pool: pg.Pool = new Proxy({} as pg.Pool, {
+  get(_target, prop, receiver) {
+    if (activePool.ended) {
+      activePool = createPool();
+    }
+    const val = Reflect.get(activePool, prop, receiver);
+    return typeof val === "function" ? val.bind(activePool) : val;
+  },
 });
 
 /** Runs fn inside a transaction; rolls back on any error. */
